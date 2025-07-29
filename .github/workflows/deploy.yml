@@ -12,6 +12,8 @@ on:
 
 jobs:
   build-and-deploy:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest # Use the latest Ubuntu runner
 
     steps:
