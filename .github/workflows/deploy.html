@@ -1,0 +1,57 @@
+# .github/workflows/deploy.yml
+
+name: Deploy React App to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Trigger this workflow on pushes to the 'main' branch
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    steps:
+      # Step 1: Checkout the repository code
+      # This action checks out your repository under $GITHUB_WORKSPACE,
+      # so your workflow can access it.
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      # This action sets up a Node.js environment with the specified version.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify your Node.js version
+
+      # Step 3: Install project dependencies
+      # Runs 'npm install' to get all required packages.
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 4: Build the React application
+      # Runs the 'build' script defined in package.json,
+      # which typically compiles your React app into the 'dist' folder.
+      - name: Build React App
+        run: npm run build
+
+      # Step 5: Deploy to GitHub Pages
+      # This action is specifically designed to deploy static sites to GitHub Pages.
+      # It takes the 'dist' folder and pushes it to the 'gh-pages' branch.
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3 # Using a popular third-party action
+        with:
+          # GITHUB_TOKEN is a special token provided by GitHub Actions
+          # with permissions to push to your repository.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The directory containing the built static files (Vite's default is 'dist')
+          publish_dir: ./dist
+          # Optional: Specify a custom branch to publish to (default is gh-pages)
+          publish_branch: gh-pages
+          #Optional: Commit message for the deployment
+          commit_message: 'Deploying to GitHub Pages'
+    
